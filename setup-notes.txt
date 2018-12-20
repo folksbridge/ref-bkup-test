@@ -1,0 +1,207 @@
+npm init
+git init
+.gitignore (node_modules and dist)
+folders: public, src
+Our public directory will handle any static assets, and most importantly houses our index.html file, which react will utilize to render your app. 
+
+./public/index.htm (https://raw.githubusercontent.com/reactjs/reactjs.org/master/static/html/single-file-example.html)
+
+yarn add -D @babel/core@7.1.0 @babel/cli@7.1.0 @babel/preset-env@7.1.0 @babel/preset-react@7.0.0
+
+.babelrc
+
+Babel also has a ton of plugins available that can be used if you only need to transform specific features or some feature you need isn’t covered by env:
+https://babeljs.io/docs/plugins/
+
+yarn add -D webpack@4.19.1 webpack-cli@3.1.1 webpack-dev-server@3.1.8 style-loader@0.23.0 css-loader@1.0.0 babel-loader@8.0.2
+
+Webpack uses loaders to process different types of imported modules for bundling. 
+It also works easily alongside the development server that we’re going to use to serve our React project in development and reload browser pages on (saved) changes to our React components. 
+In order to utilize any of this though, we’ll need to configure Webpack to use our loaders and prepare the dev server
+
+since we want to use Hot Module Replacement so we don’t have to constantly refresh to see our changes. All we do for that in terms of this file is instantiate a new instance of the plugin in the plugins property and make sure that we set hotOnly to true in devServer. We still need to set up one more thing in React before HMR works, though.
+
+yarn add react@16.5.2 react-dom@16.5.2 -S
+
+  "scripts": {
+    "start": "webpack-dev-server --mode=development",
+    "build": "webpack-dev-server --mode=production"
+  },
+
+  HMR needs to know what to actually replace and currently we haven’t given it anything. For that, we’re going to use a package one of the folks on the react team have provided us: react-hot-loader@4.3.11.
+
+yarn add react-hot-loader@4.3.11 -S
+
+git init
+yarn add html-webpack-plugin --dev
+yarn add clean-webpack-plugin
+yarn add mini-css-extract-plugin -D
+yarn add node-sass sass-loader --save-dev
+yarn add webpack-md5-hash -D
+
+PostCSS provides you with autoprefixer, cssnano and other nice and handy stuff. 
+you do not have to use webpack to benefit from PostCSS, it as a pretty decent post-css-cli plugin that allows you to use it in npm script
+
+yarn add postcss-loader autoprefixer -D
+Create postcss.config.js where you require relevant plugins,
+
+===========================
+to try ...:
+https://github.com/stylelint/stylelint
+============================
+git add .
+git commit -m "first commit withouut linting"
+
+Committer: Ken Wu <ken.wu@ibm.com>
+Your name and email address were configured automatically based
+on your username and hostname. Please check that they are accurate.
+You can suppress this message by setting them explicitly. Run the
+following command and follow the instructions in your editor to edit
+your configuration file:
+
+    git config --global --edit
+
+After doing this, you may fix the identity used for this commit with:
+
+    git commit --amend --reset-author
+==================================
+
+yarn add eslint --save-dev
+./node_modules/.bin/eslint --init    ----> .eslintrc.js
+
+optional:
+yarn add eslint-config-airbnb eslint-plugin-import eslint-plugin-jsx-a11y eslint-plugin-react -D
+replace "extends" in config: "extends": "airbnb",
+
+install eslint extension in editor
+click to focus, then press "ctrl + ."to fix linting errors
+
+Prettier is one of the most popular formatters nowadays. It can be added to ESLint, your editor, and also installed as a pre-commit hook.
+
+install Prettier extenstion to editor
+
+to work in sync with eslint:
+yarn add prettier eslint-plugin-prettier -D
+yarn add eslint-config-prettier -D
+
+edit eslint config:
+plugins: prettier"
+rules: "prettier/prettier": "error"
+extends: 
+  "prettier",
+  "plugin:prettier/recommended"
+
+create prettier.config.js
+
+VS Code settings: - add :
+"[javascript]": {
+    "editor.formatOnSave": true
+  }
+
+ yarn add eslint-loader --save-dev
+ webpack.config.js rules for js files:
+ use: [{ loader: "babel-loader" }, { loader: "eslint-loader" }]
+
+ add Hello.js component to try propTypes:
+ import PropTypes from 'prop-types';
+Hello.propTypes = {
+  hello: PropTypes.string
+};
+==========================
+git init
+git add .
+nano .gitignore (add your node_modules there)
+git commit -m "First commit"
+git remote add origin your origin
+git push -u origin master
+
+============================
+Hot Module Replacement (HMR) exchanges, adds, or removes modules while an application is running, without a full reload. This can significantly speed up development in a few ways:
+Retain application state which is lost during a full reload.
+Save valuable development time by only updating what’s changed.
+Tweak styling faster — almost comparable to changing styles in the browser’s debugger.
+
+We had to replace chunkhash with hash, because evidently webpack has fixed that issue since the last time. 
+
+================================
+
+yarn add raw-loader
+      {
+        test: /\.html$/,
+        loader: 'raw-loader'
+      }
+
+add to entry file:
+if (process.env.NODE_ENV === 'development') {
+  require('./index.html');
+}
+
+    "start": "NODE_ENV=development webpack-dev-server --mode=development",
+    "start": "SET NODE_ENV=development &  webpack-dev-server --mode=development",
+=====================================================
+
+Modular css
+
+          {
+            loader: 'css-loader',
+            options: {
+              modules: true,
+              importLoaders: 2,
+              localIdentName: '[name]_[local]_[hash:base64]',
+              //sourceMap: true,
+              //minimize: true
+            }
+          },
+import styles from './scss/App.scss';
+<div className={styles.App}>
+==========================================
+
+css/scss hot reload: style-loader
+
+============================================
+file-load for images...
+https://webpack.js.org/loaders/file-loader/
+
+==============================================
+yarn add favicons-webpack-plugin -D
+let FaviconsWebpackPlugin = require('favicons-webpack-plugin')
+plugins: [
+  new FaviconsWebpackPlugin('./my-logo.png')
+]
+
+            new HtmlWebpackPlugin({
+                mobile: true,
+                inject: true,
+                title: mode === 'production' ? 'Company' : 'Zezima',
+                template: path.resolve(process.cwd(), 'source/webpack/template.ejs')
+            }),
+
+            new FaviconsWebpackPlugin({
+                logo: path.resolve(process.cwd(), 'source/webpack/favicon.png'),
+                prefix: 'icons/[hash]/',
+                emitStats: false,
+                persistentCache: false,
+                inject: true,
+                title: 'Company Editor',
+                background: '#00b8ff',
+                icons: {
+                    android: true,
+                    appleIcon: true,
+                    appleStartup: true,
+                    coast: false,
+                    favicons: true,
+                    firefox: true,
+                    opengraph: false,
+                    twitter: false,
+                    yandex: false,
+                    windows: true
+                }
+            }),
+=================================================
+
+$ git remote rm origin
+$ git remote add origin git@github.com:aplikacjainfo/proj1.git
+$ git config master.remote origin
+$ git config master.merge refs/heads/master
+
+==================================================
